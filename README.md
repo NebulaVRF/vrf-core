@@ -1,14 +1,15 @@
-# 🔮 NebulaVRF 
+# NebulaVRF 
 
-**NebulaVRF** is a fully on-chain **Verifiable Random Function (VRF)** core for the [Soroban](https://soroban.stellar.org/) smart contract platform on Stellar. It transforms a secure seed into cryptographically sound, verifiable randomness—without requiring external oracles.
+**NebulaVRF** is a fully on-chain **Verifiable Random Function (VRF)** core for the [Soroban](https://stellar.org/soroban/) smart contracts on Stellar. It transforms a secure seed into cryptographically sound, verifiable randomness—without requiring external oracles.
 
 This crate is ideal for developers building dApps that need:
 - Randomized game mechanics or loot drops
 - Unbiased DAO voting and committee selection
 - Fair token lotteries or airdrops
 - NFT trait randomization
+- Anything else that might require randomization
 
-Built in pure Rust using the `blst` BLS12-381 signature library. Designed to be compiled to WASM and integrated into Soroban smart contracts.
+Built in pure Rust using the `blst` BLS12-381 signature library. Designed to be compiled to WASM and later integrated into Soroban smart contracts.
 
 ---
 
@@ -19,7 +20,6 @@ Built in pure Rust using the `blst` BLS12-381 signature library. Designed to be 
 - Deterministic output (same seed → same randomness)
 - Unpredictable if seed is kept secret
 - Commit–reveal scheme to prevent last-mover bias
-- 8+ unit tests covering collisions, determinism, and corruption
 
 ---
 
@@ -57,7 +57,7 @@ let as_hash = sha2::Sha256::digest(output);
 
 ---
 
-## Seed Generation (Production Guidance)
+## Seed Generation 
 
 Use this for secure randomness:
 
@@ -136,8 +136,8 @@ Coverage:
 
 - Based on the [IETF CFRG VRF Draft Spec](https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-vrf)
 - Uses BLS12-381 signatures (min-sig mode)
-- Domain separation follows RFC 9380 format
-- Similar to ETH2.0 / Chainlink / Polkadot randomness patterns
+- Domain separation follows [RFC 9380](https://datatracker.ietf.org/doc/html/rfc9380) format
+- Similar to ETH2.0 / Chainlink / Polkadot randomness implementations
 
 ---
 
