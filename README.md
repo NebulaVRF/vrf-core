@@ -33,6 +33,8 @@ Built in pure Rust using the `blst` [BLS12-381 signature library](https://github
    - `public_key` — the proof of validity (BLS pubkey)
 5. Others verify the output using `verify_proof()`.
 
+> **Note:** The current implementation is stateless and derives the private key from the seed for each request. **When deployed as a smart contract or oracle, NebulaVRF will use a persistent private key for compatibility with industry standards (e.g., Chainlink, Polkadot, Ethereum 2.0).**
+
 ---
 
 ## Types and Output Formats

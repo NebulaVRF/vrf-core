@@ -7,11 +7,12 @@ use rand::rngs::OsRng;
 use rand::RngCore;
 use hex;
 
-/// GET /get-random?proof=true&commit=true
+/// GET /get-random?seed=<hex>&proof=true&commit=true
 #[derive(Debug, Deserialize)]
 pub struct RandomRequest {
-    proof: Option<bool>,
-    commit: Option<bool>,
+    pub seed: Option<String>,
+    pub proof: Option<bool>,
+    pub commit: Option<bool>,
 }
 
 #[derive(Debug, Serialize)]
@@ -25,15 +26,27 @@ pub struct RandomResponse {
 }
 
 pub async fn get_random_handler(Query(params): Query<RandomRequest>) -> Json<RandomResponse> {
-    // Generate secure 32-byte seed
-    let mut seed = [0u8; 32];
-    OsRng.fill_bytes(&mut seed);
+    // Use user-supplied seed if provided and valid, else generate random
+    let seed = if let Some(seed_hex) = &params.seed {
+        match hex::decode(seed_hex) {
+            Ok(bytes) if bytes.len() == 32 => bytes,
+            _ => {
+                let mut s = [0u8; 32];
+                OsRng.fill_bytes(&mut s);
+                s.to_vec()
+            }
+        }
+    } else {
+        let mut s = [0u8; 32];
+        OsRng.fill_bytes(&mut s);
+        s.to_vec()
+    };
 
     // Generate randomness using NebulaVRF
     let vrf = generate_random(&seed).expect("VRF generation failed");
 
     let response = RandomResponse {
-        seed: hex::encode(seed),
+        seed: hex::encode(&seed),
         randomness: hex::encode(vrf.output),
         public_key: if params.proof.unwrap_or(false) {
             Some(hex::encode(vrf.public_key))
