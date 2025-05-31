@@ -8,4 +8,5 @@ blst = { git = "https://github.com/supranational/blst", branch = "master", packa
 rand = "0.8"
 sha2 = "0.10"         # For hashing (e.g. SHA256)
 hex = "0.4"           # For debugging/log output
-serde = { version = "1.0", features = ["derive"] }  # Optional: for JSON if needed
+serde = { version = "1.0", features = ["derive"] }  
+statrs = "0.16"  

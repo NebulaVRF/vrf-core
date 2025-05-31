@@ -1,15 +1,16 @@
 use blst::min_sig::{SecretKey, PublicKey, Signature};
 use blst::BLST_ERROR;
 use crate::utils::hash::sha256;
-use super::types::VRFError;
+use super::types::{VRFError, VRFProof};
 
-/// VRFProof includes the random output and the public key for verification.
-#[derive(Debug)]
-pub struct VRFProof {
-    pub output: Vec<u8>,     // The randomness (signature)
-    pub public_key: Vec<u8>, // The proof
-}
-
+/// Generates a VRF proof and random output from a seed.
+///
+/// # Arguments
+/// * `seed` - The input seed as a byte slice.
+///
+/// # Returns
+/// * `Ok(VRFProof)` containing the output and public key if successful.
+/// * `Err(VRFError)` if key generation or signing fails.
 pub fn generate_random(seed: &[u8]) -> Result<VRFProof, VRFError> {
     let dst = b"BLS_SIG_BLS12381G2_XMD:SHA-256_SSWU_RO_NUL_";
 
@@ -24,6 +25,16 @@ pub fn generate_random(seed: &[u8]) -> Result<VRFProof, VRFError> {
     })
 }
 
+/// Verifies a VRF proof given the seed, signature, and public key.
+///
+/// # Arguments
+/// * `seed` - The input seed as a byte slice.
+/// * `signature_bytes` - The VRF output (signature) as bytes.
+/// * `public_key_bytes` - The public key as bytes.
+///
+/// # Returns
+/// * `Ok(())` if the proof is valid.
+/// * `Err(VRFError)` if verification fails.
 pub fn verify_proof(
     seed: &[u8],
     signature_bytes: &[u8],

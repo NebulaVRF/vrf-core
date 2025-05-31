@@ -1,32 +1,47 @@
+//! Unit tests for NebulaVRF core logic: generation, verification, commit-reveal, and edge cases.
+//!
+//! These tests cover:
+//! - VRF output validity and proof verification
+//! - Commit-reveal integrity
+//! - Determinism and uniqueness
+//! - Tamper/corruption detection
+//! - Edge cases (empty seeds, collisions)
+
 use nebula_vrf::vrf::{generate_random, verify_proof};
 use nebula_vrf::vrf::commit::{commit, verify_commit};
 use nebula_vrf::vrf::types::VRFError;
 
+/// Test that VRF output is valid, verifiable, and fails on tampering.
 #[test]
 fn test_generate_and_verify_vrf() {
     let seed = b"secure-seed-xyz";
     let vrf = generate_random(seed).expect("generation failed");
 
-    assert_eq!(vrf.output.len(), 48);      // BLS sig (G1)
-    assert_eq!(vrf.public_key.len(), 96);  // BLS pk (G2)
+    // Output sizes: BLS signature (G1) and public key (G2)
+    assert_eq!(vrf.output.len(), 48);      // 48 bytes for BLS signature
+    assert_eq!(vrf.public_key.len(), 96);  // 96 bytes for BLS public key
 
-    // Should verify
+    // Proof should verify for correct seed
     assert!(verify_proof(seed, &vrf.output, &vrf.public_key).is_ok());
 
-    // Tamper check
+    // Verification should fail for wrong seed
     let bad = verify_proof(b"wrong-seed", &vrf.output, &vrf.public_key);
     assert!(matches!(bad, Err(VRFError::VerificationFailed)));
 }
 
+/// Test commit-reveal: commit is reproducible and detects tampering.
 #[test]
 fn test_commit_reveal() {
     let seed = b"fairness-proof";
     let commitment = commit(seed);
 
+    // Should verify for correct seed
     assert!(verify_commit(seed, &commitment));
+    // Should fail for tampered seed
     assert!(!verify_commit(b"tampered", &commitment));
 }
 
+/// Test that VRF is deterministic: same seed always yields same output/proof.
 #[test]
 fn test_vrf_determinism() {
     let seed = b"repeatable-seed-999";
@@ -38,6 +53,7 @@ fn test_vrf_determinism() {
     assert_eq!(vrf1.public_key, vrf2.public_key, "VRF proof must be deterministic");
 }
 
+/// Test that different seeds yield unique outputs (no collisions).
 #[test]
 fn test_vrf_uniqueness() {
     let seed1 = b"unique-seed-1";
@@ -49,13 +65,14 @@ fn test_vrf_uniqueness() {
     assert_ne!(vrf1.output, vrf2.output, "Different seeds should produce different VRF outputs");
 }
 
+/// Test that a corrupted signature does not verify.
 #[test]
 fn test_corrupted_signature_fails() {
     let seed = b"test-seed";
     let vrf = generate_random(seed).unwrap();
 
     let mut corrupted = vrf.output.clone();
-    corrupted[0] ^= 0xff;
+    corrupted[0] ^= 0xff; // Flip a bit
 
     let result = verify_proof(seed, &corrupted, &vrf.public_key);
     assert!(
@@ -64,13 +81,14 @@ fn test_corrupted_signature_fails() {
     );
 }
 
+/// Test that a corrupted public key does not verify.
 #[test]
 fn test_corrupted_public_key_fails() {
     let seed = b"test-seed";
     let vrf = generate_random(seed).unwrap();
 
     let mut corrupted = vrf.public_key.clone();
-    corrupted[1] ^= 0xff;
+    corrupted[1] ^= 0xff; // Flip a bit
 
     let result = verify_proof(seed, &vrf.output, &corrupted);
     assert!(
@@ -79,7 +97,7 @@ fn test_corrupted_public_key_fails() {
     );
 }
 
-
+/// Test that different seeds do not collide in commit-reveal.
 #[test]
 fn test_commit_collision() {
     let seed1 = b"collide-me-1";
@@ -91,6 +109,7 @@ fn test_commit_collision() {
     assert_ne!(hash1, hash2, "Different seeds should not hash to the same commitment");
 }
 
+/// Test that empty seed input is handled gracefully.
 #[test]
 fn test_empty_seed_input() {
     let empty = b"";
