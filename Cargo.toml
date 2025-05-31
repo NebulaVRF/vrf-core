@@ -10,3 +10,13 @@ sha2 = "0.10"         # For hashing (e.g. SHA256)
 hex = "0.4"           # For debugging/log output
 serde = { version = "1.0", features = ["derive"] }  
 statrs = "0.16"  
+axum = "0.7"
+tokio = { version = "1.36", features = ["full"] }
+serde_json = "1.0"
+tracing = "0.1"
+tracing-subscriber = "0.3"
+
+
+[[bin]]
+name = "nebula_vrf_api"
+path = "api/main.rs"
