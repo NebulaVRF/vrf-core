@@ -1,4 +1,3 @@
-use axum::Router;
 use tokio::net::TcpListener;
 use tracing_subscriber;
 

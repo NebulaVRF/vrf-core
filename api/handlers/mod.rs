@@ -5,7 +5,6 @@ use nebula_vrf::vrf::commit::{commit, verify_commit};
 
 use rand::rngs::OsRng;
 use rand::RngCore;
-use hex;
 
 /// GET /get-random?seed=<hex>&proof=true&commit=true
 #[derive(Debug, Deserialize)]

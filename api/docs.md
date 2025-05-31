@@ -4,7 +4,7 @@
 >
 > You can test all endpoints live at this URL.
 
-This document describes the HTTP API endpoints for the NebulaVRF randomness and proof service. All endpoints are available under the base URL
+This document describes the HTTP API endpoints for the NebulaVRF randomness and proof service. All endpoints are available under the base URL.
 
 ---
 
