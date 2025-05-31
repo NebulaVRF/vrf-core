@@ -1,6 +1,10 @@
 # NebulaVRF API Documentation
 
-This document describes the HTTP API endpoints for the NebulaVRF randomness and proof service. All endpoints are available under the base URL (e.g., `http://localhost:3000`).
+> **Deployed API Base URL:** [https://vrf-core-production.up.railway.app](https://vrf-core-production.up.railway.app)
+>
+> You can test all endpoints live at this URL.
+
+This document describes the HTTP API endpoints for the NebulaVRF randomness and proof service. All endpoints are available under the base URL
 
 ---
 
