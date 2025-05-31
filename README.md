@@ -2,6 +2,8 @@
 
 **NebulaVRF** is a fully on-chain **Verifiable Random Function (VRF)** core for the [Soroban](https://stellar.org/soroban/) smart contracts on Stellar. It transforms a secure seed into cryptographically sound, verifiable randomness—without requiring external oracles.
 
+> **View full API documentation and live endpoint usage:** [api/docs.md](api/docs.md)
+
 This crate is ideal for developers building dApps that need:
 - Randomized game mechanics or loot drops
 - Unbiased DAO voting and committee selection
