@@ -9,7 +9,7 @@ This crate is ideal for developers building dApps that need:
 - NFT trait randomization
 - Anything else that might require randomization
 
-Built in pure Rust using the `blst` BLS12-381 signature library. Designed to be compiled to WASM and later integrated into Soroban smart contracts.
+Built in pure Rust using the `blst` [BLS12-381 signature library](https://github.com/supranational/blst/blob/master/bindings/rust/README.md). Designed to be compiled to WASM and later integrated into Soroban smart contracts.
 
 ---
 
@@ -162,7 +162,7 @@ nebula-vrf/
 ## FAQ
 
 **Is the randomness deterministic?**  
-Yes—same seed → same output. This allows verifiability.
+Yes, same seed → same output. This allows verifiability.
 
 **Can attackers predict the randomness?**  
 Not if the seed is secret and committed before reveal.
@@ -171,7 +171,7 @@ Not if the seed is secret and committed before reveal.
 384 bits (48 bytes) directly. You can truncate or hash to get `u64`, `u128`, `SHA256`, etc.
 
 **Can this be used on-chain?**  
-Yes—this core is designed to be compiled into Soroban smart contracts. We will publish a sample contract to use this soon.
+Yes, this core is designed to be compiled into Soroban smart contracts. We will publish a sample contract to show the use-case soon
 
 ---
 
@@ -184,5 +184,5 @@ MIT / Apache-2.0 — Free for public and commercial use in Stellar/Soroban dApps
 ## Author
 
 Built by Mukund Jha  
-[GitHub](https://github.com/nebulavrf) | [https://nebulavrf.vercel.app](https://nebulavrf.vercel.app)  
+[GitHub](https://github.com/NebulaVRF/vrf-core) | [https://nebulavrf.vercel.app](https://nebulavrf.vercel.app)  
 Supported by Stellar Community Fund
