@@ -2,6 +2,7 @@ use axum::{Json, extract::Query};
 use serde::{Deserialize, Serialize};
 use nebula_vrf::vrf::{generate_random, verify_proof};
 use nebula_vrf::vrf::commit::{commit, verify_commit};
+use nebula_vrf::SamplePayload;
 
 use rand::rngs::OsRng;
 use rand::RngCore;
@@ -63,6 +64,52 @@ pub async fn get_random_handler(Query(params): Query<RandomRequest>) -> Json<Ran
 }
 
 // --- New Handlers ---
+
+#[derive(Debug, Deserialize)]
+pub struct PayloadRequest {
+    pub seed_len: Option<usize>,
+    pub salt_len: Option<usize>,
+}
+
+#[derive(Debug, Serialize)]
+pub struct PayloadGroup {
+    pub seed: String,
+    pub salt: String,
+    pub commitment: String,
+    pub pubkey: String,
+    pub signature: String,
+}
+
+#[derive(Debug, Serialize)]
+pub struct PayloadResponse {
+    pub hex: PayloadGroup,
+    pub base64: PayloadGroup,
+}
+
+pub async fn payloads_handler(Query(params): Query<PayloadRequest>) -> Json<PayloadResponse> {
+    let seed_len = params.seed_len.unwrap_or(8);
+    let salt_len = params.salt_len.unwrap_or(8);
+
+    let payload = SamplePayload::generate(seed_len, salt_len)
+        .expect("Failed to generate sample payload");
+
+    Json(PayloadResponse {
+        hex: PayloadGroup {
+            seed: payload.seed_hex(),
+            salt: payload.salt_hex(),
+            commitment: payload.commitment_hex(),
+            pubkey: payload.pubkey_hex(),
+            signature: payload.signature_hex(),
+        },
+        base64: PayloadGroup {
+            seed: payload.seed_base64(),
+            salt: payload.salt_base64(),
+            commitment: payload.commitment_base64(),
+            pubkey: payload.pubkey_base64(),
+            signature: payload.signature_base64(),
+        },
+    })
+}
 
 #[derive(Debug, Deserialize)]
 pub struct VerifyRandomRequest {

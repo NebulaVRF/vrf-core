@@ -5,6 +5,7 @@ use super::handlers::{
     verify_random_handler,
     commit_handler,
     verify_commit_handler,
+    payloads_handler,
 };
 use axum::{Router, routing::{get, post}};
 
@@ -12,6 +13,7 @@ use axum::{Router, routing::{get, post}};
 pub fn create_routes() -> Router {
     Router::new()
         .route("/get-random", get(get_random_handler))
+        .route("/payloads", get(payloads_handler))
         .route("/verify-random", post(verify_random_handler))
         .route("/commit", post(commit_handler))
         .route("/verify-commit", post(verify_commit_handler))
