@@ -25,6 +25,31 @@ Built in pure Rust using the `blst` [BLS12-381 signature library](https://github
 
 ---
 
+## Installation
+
+Add `nebula-vrf` to your `Cargo.toml`:
+
+```toml
+[dependencies]
+nebula-vrf = "0.1.1"
+```
+
+If you need the optional API features (for running the HTTP server), include the `api` feature:
+
+```toml
+[dependencies]
+nebula-vrf = { version = "0.1.1", features = ["api"] }
+```
+
+Then use it in your code:
+
+```rust
+use nebula_vrf::vrf::generate_random;
+use nebula_vrf::vrf::verify_proof;
+use nebula_vrf::vrf::commit::{commit, verify_commit};
+```
+
+---
 
 ## How It Works
 
