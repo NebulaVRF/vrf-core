@@ -31,14 +31,14 @@ Add `nebula-vrf` to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-nebula-vrf = "0.1.3"
+nebula-vrf = "0.1.4"
 ```
 
 If you need the optional API features (for running the HTTP server), include the `api` feature:
 
 ```toml
 [dependencies]
-nebula-vrf = { version = "0.1.3", features = ["api"] }
+nebula-vrf = { version = "0.1.4", features = ["api"] }
 ```
 
 Then use it in your code:

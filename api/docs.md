@@ -46,7 +46,50 @@ Generates a new random seed, VRF output, and optionally returns the public key a
 
 ---
 
-### 2. `POST /verify-random`
+### 2. `GET /payloads`
+
+**Description:**
+Generates a Soroban testnet payload bundle (seed, salt, commitment, pubkey, signature)
+in both **hex** and **base64**. This is intended for testnet integration and Stellar Lab
+input formatting.
+
+**Query Parameters:**
+- `seed_len` (optional, integer): Length of the random seed in bytes (default: 8).
+- `salt_len` (optional, integer): Length of the random salt in bytes (default: 8).
+
+**Example:**
+```sh
+curl "http://localhost:3000/payloads?seed_len=8&salt_len=8"
+```
+
+**Response:**
+```json
+{
+  "hex": {
+    "seed": "<hex>",
+    "salt": "<hex>",
+    "commitment": "<hex>",
+    "pubkey": "<hex>",
+    "signature": "<hex>"
+  },
+  "base64": {
+    "seed": "<base64>",
+    "salt": "<base64>",
+    "commitment": "<base64>",
+    "pubkey": "<base64>",
+    "signature": "<base64>"
+  }
+}
+```
+
+Notes:
+- `commitment = sha256(seed || salt)`
+- `pubkey` is G1 (96 bytes, uncompressed)
+- `signature` is G2 (192 bytes, uncompressed)
+
+---
+
+### 3. `POST /verify-random`
 
 **Description:**
 Verifies a VRF proof given a seed, output, and public key. Returns whether the proof is valid.
@@ -79,7 +122,7 @@ curl -X POST "http://localhost:3000/verify-random" \
 
 ---
 
-### 3. `POST /commit`
+### 4. `POST /commit`
 
 **Description:**
 Returns a SHA256 commitment for a given seed.
@@ -108,7 +151,7 @@ curl -X POST "http://localhost:3000/commit" \
 
 ---
 
-### 4. `POST /verify-commit`
+### 5. `POST /verify-commit`
 
 **Description:**
 Verifies that a given seed matches a provided commitment.
@@ -150,6 +193,7 @@ curl -X POST "http://localhost:3000/verify-commit" \
 - The `/get-random` endpoint is useful for generating new randomness and commitments.
 - Use `/verify-random` to check the validity of a VRF proof (e.g., in a smart contract or backend service).
 - Use `/commit` and `/verify-commit` for commit-reveal flows to ensure fairness and prevent manipulation.
+- Use `/payloads` when you need Soroban-compatible testnet payloads for `commit` and `reveal`.
 
 ## Error Handling
 - If a request is malformed or contains invalid hex, the endpoint will return `valid: false` or an appropriate error response.
@@ -159,9 +203,10 @@ curl -X POST "http://localhost:3000/verify-commit" \
 
 ## Example Workflow
 1. Call `/get-random` to generate a seed, randomness, public key, and commitment (optionally supply your own seed).
-2. Use `/verify-random` to verify the randomness and proof.
-3. Use `/commit` to get a commitment for a custom seed.
-4. Use `/verify-commit` to verify a seed against a commitment.
+2. Call `/payloads` to generate testnet-ready payloads for the Soroban contract.
+3. Use `/verify-random` to verify the randomness and proof.
+4. Use `/commit` to get a commitment for a custom seed.
+5. Use `/verify-commit` to verify a seed against a commitment.
 
 ---
 
