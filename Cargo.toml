@@ -1,6 +1,6 @@
 [package]
 name = "nebula-vrf"
-version = "0.1.2"
+version = "0.1.3"
 edition = "2021"
 description = "BLS12-381 VRF core for Soroban: local randomness with optional on-chain verification"
 license = "MIT"

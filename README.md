@@ -1,6 +1,6 @@
 # NebulaVRF 
 
-**NebulaVRF** is a **Verifiable Random Function (VRF)** core for Soroban developers. It transforms a secure seed into cryptographically sound, verifiable randomness without external oracles. You can generate randomness locally and, if needed, submit proofs for on-chain verification.
+**NebulaVRF** is a **Verifiable Random Function (VRF)** core for Soroban developers. It transforms a secure seed into cryptographically sound, verifiable randomness without external oracles. You can generate randomness locally and, if needed, submit proofs for on-chain verification on testnet.
 
 > **View full API documentation and live endpoint usage:** [api/docs.md](api/docs.md)
 
@@ -31,14 +31,14 @@ Add `nebula-vrf` to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-nebula-vrf = "0.1.1"
+nebula-vrf = "0.1.3"
 ```
 
 If you need the optional API features (for running the HTTP server), include the `api` feature:
 
 ```toml
 [dependencies]
-nebula-vrf = { version = "0.1.1", features = ["api"] }
+nebula-vrf = { version = "0.1.3", features = ["api"] }
 ```
 
 Then use it in your code:
@@ -54,18 +54,20 @@ use nebula_vrf::vrf::commit::{commit, verify_commit};
 ## How It Works
 
 1. User generates a private random `seed` (not shared initially).
-2. Hash of seed is committed on-chain using `commit()`.
+2. Hash of seed is committed on-chain (via the testnet contract) using `commit()`.
 3. After a delay, the seed is revealed and passed into `generate_random()`.
 4. The function returns:
    - `output` — a random-looking 48-byte value (BLS signature)
    - `public_key` — the proof of validity (BLS pubkey)
 5. Others verify the output using `verify_proof()`.
 
-### Optional On-Chain Verification
+### Testnet Contract Integration
 
-If you need on-chain verification, submit the commitment, seed, salt, and signature to the NebulaVRF Soroban contract. The contract verifies the proof and returns the verified randomness.
-
-> **Note:** The current implementation is stateless and derives the private key from the seed for each request. **When deployed as a smart contract or oracle, NebulaVRF will use a persistent private key for compatibility with industry standards (e.g., Chainlink, Polkadot, Ethereum 2.0).**
+The Soroban testnet contract lives in the `vrf-testnet` repo. It expects:
+- `commitment = sha256(seed || salt)`
+- **G1 pubkey** (96 bytes, uncompressed)
+- **G2 signature** (192 bytes, uncompressed)
+- **DST**: `NEBULA-VRF-V01-BLS12381G2`
 
 ---
 
@@ -91,6 +93,32 @@ let as_hash = sha2::Sha256::digest(output);
 
 ---
 
+## Payload Generation (Testnet Helper)
+
+If you are coming from the NebulaVRF testnet contract, you can generate
+testnet‑compatible payloads (seed, salt, commitment, pubkey, signature) here.
+These helpers are for **demo/testing** only — for real integrations you should
+implement your own seed/salt generation logic.
+
+Generate payloads:
+
+```bash
+cargo run --example sample_payloads
+```
+
+Run the local API:
+
+```bash
+cargo run --bin nebula_vrf_api --features api
+```
+
+Endpoints:
+- `GET http://localhost:3000/payloads`
+- `GET http://localhost:3000/payloads?seed_len=8&salt_len=8`
+
+
+---
+
 ## Seed Generation 
 
 Use this for secure randomness:
@@ -111,6 +139,7 @@ fn generate_secure_seed() -> [u8; 32] {
 - Always commit before revealing
 
 ---
+
 
 ## Example Usage
 
@@ -146,32 +175,6 @@ let commitment = commit(seed);
 // Save or store `commitment` on-chain
 assert!(verify_commit(seed, &commitment));  // later when revealed
 ```
-
----
-
-## Payload Generation (Testnet Helper)
-
-If you are coming from the NebulaVRF testnet contract, you can generate
-testnet‑compatible payloads (seed, salt, commitment, pubkey, signature) here.
-These helpers are for **demo/testing** only — for real integrations you should
-implement your own seed/salt generation logic.
-
-Generate payloads:
-
-```bash
-cargo run --example sample_payloads
-```
-
-Run the local API:
-
-```bash
-cargo run --bin nebula_vrf_api --features api
-```
-
-Endpoints:
-- `GET http://localhost:3000/payloads`
-- `GET http://localhost:3000/payloads?seed_len=8&salt_len=8`
-
 ---
 
 ## Testing
@@ -230,7 +233,7 @@ Not if the seed is secret and committed before reveal.
 384 bits (48 bytes) directly. You can truncate or hash to get `u64`, `u128`, `SHA256`, etc.
 
 **Can this be used on-chain?**  
-Yes, this core is designed to be compiled into Soroban smart contracts. We will publish a sample contract to show the use-case soon
+Yes. The testnet contract lives in the `vrf-testnet` repo and verifies proofs on-chain.
 
 ---
 
