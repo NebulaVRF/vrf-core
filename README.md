@@ -25,6 +25,7 @@ Built in pure Rust using the `blst` [BLS12-381 signature library](https://github
 
 ---
 
+
 ## How It Works
 
 1. User generates a private random `seed` (not shared initially).
@@ -120,6 +121,31 @@ let commitment = commit(seed);
 // Save or store `commitment` on-chain
 assert!(verify_commit(seed, &commitment));  // later when revealed
 ```
+
+---
+
+## Payload Generation (Testnet Helper)
+
+If you are coming from the NebulaVRF testnet contract, you can generate
+testnet‑compatible payloads (seed, salt, commitment, pubkey, signature) here.
+These helpers are for **demo/testing** only — for real integrations you should
+implement your own seed/salt generation logic.
+
+Generate payloads:
+
+```bash
+cargo run --example sample_payloads
+```
+
+Run the local API:
+
+```bash
+cargo run --bin nebula_vrf_api --features api
+```
+
+Endpoints:
+- `GET http://localhost:3000/payloads`
+- `GET http://localhost:3000/payloads?seed_len=8&salt_len=8`
 
 ---
 
