@@ -1,6 +1,6 @@
 # NebulaVRF 
 
-**NebulaVRF** is a fully on-chain **Verifiable Random Function (VRF)** core for the [Soroban](https://stellar.org/soroban/) smart contracts on Stellar. It transforms a secure seed into cryptographically sound, verifiable randomness—without requiring external oracles.
+**NebulaVRF** is a **Verifiable Random Function (VRF)** core for Soroban developers. It transforms a secure seed into cryptographically sound, verifiable randomness without external oracles. You can generate randomness locally and, if needed, submit proofs for on-chain verification.
 
 > **View full API documentation and live endpoint usage:** [api/docs.md](api/docs.md)
 
@@ -34,6 +34,10 @@ Built in pure Rust using the `blst` [BLS12-381 signature library](https://github
    - `output` — a random-looking 48-byte value (BLS signature)
    - `public_key` — the proof of validity (BLS pubkey)
 5. Others verify the output using `verify_proof()`.
+
+### Optional On-Chain Verification
+
+If you need on-chain verification, submit the commitment, seed, salt, and signature to the NebulaVRF Soroban contract. The contract verifies the proof and returns the verified randomness.
 
 > **Note:** The current implementation is stateless and derives the private key from the seed for each request. **When deployed as a smart contract or oracle, NebulaVRF will use a persistent private key for compatibility with industry standards (e.g., Chainlink, Polkadot, Ethereum 2.0).**
 
@@ -181,7 +185,7 @@ Yes, this core is designed to be compiled into Soroban smart contracts. We will 
 
 ## License
 
-MIT / Apache-2.0 — Free for public and commercial use in Stellar/Soroban dApps.
+MIT — Free for public and commercial use in Stellar/Soroban dApps.
 
 ---
 

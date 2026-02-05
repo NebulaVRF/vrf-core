@@ -136,8 +136,9 @@ dependencies = [
 
 [[package]]
 name = "blst"
-version = "0.3.14"
-source = "git+https://github.com/supranational/blst?branch=master#c19382c13e85891bea17ff243f6b79ef0bbeb638"
+version = "0.3.16"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "dcdb4c7013139a150f9fc55d123186dbfaba0d912817466282c73ac49e71fb45"
 dependencies = [
  "cc",
  "glob",
